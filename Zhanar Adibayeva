@@ -1,0 +1,209 @@
+# Task1.1
+# Импорт библиотеки requests
+import requests
+# Задаеv идентификатор записи (в данном случае, 1), которую мы хотим получить из API.
+post_id = 1
+# Формируем URL для запроса, используя jsonplaceholder.typicode.com
+url = f'https://jsonplaceholder.typicode.com/todos/{post_id}'
+# Выполняем HTTP GET-запрос по указанному URL и результат сохраняеь в переменной response.
+response = requests.get(url)
+# Выводим JSON-данные, полученные в ответе
+print(response.json())
+# Проверяем статус-код ответа
+#Если код находится в диапазоне 400-499, выводится сообщение о клиентской ошибке. Если код находится в диапазоне 500-599, выводится сообщение о серверной ошибке.
+if 400 <= response.status_code <= 499:
+    print(f"Client Error: {response.status_code}")
+elif 500 <= response.status_code <= 599:
+    print(f"Server Error: {response.status_code}")
+
+# Task1.2
+# Определение класса ToDo.Класс представляет сущность "Задача" и будет содержать информацию о задаче.
+class ToDo:
+ # Конструктор класса, инициализирующий атрибуты объекта
+    def __init__(self, userId, id, title, completed):
+ # Атрибут userId, представляющий идентификатор пользователя
+        self.userId = userId
+ # Атрибут id, представляющий идентификатор задачи
+        self.id = id
+ # Атрибут title, представляющий заголовок (название) задачи
+        self.title = title
+  # Атрибут completed, представляющий статус завершения задачи
+        self.completed = completed
+
+# Task1.3
+# Создание нового экземпляра класса ToDo  с использованием конструктора класса (__init__). Передаются значения для атрибутов userId, id, title и completed.
+new_todo_object = ToDo(userId=2, id=201, title="Example Task", completed=False)
+
+# Task1.4
+# Создаем словарь new_todo_item на основе атрибутов нового объекта ToDo
+new_todo_item = {
+    "userId": new_todo_object.userId,
+    "title": new_todo_object.title,
+    "completed": new_todo_object.completed
+}
+# Выполняем HTTP POST-запроса для создания новой задачи на внешнем сервере (jsonplaceholder.typicode.com)
+response = requests.post('https://jsonplaceholder.typicode.com/todos', json=new_todo_item)
+# Проверка статус-кода ответа
+if response.status_code >= 400:
+ # Вывод сообщения об ошибке в случае ошибочного ответа
+    print(f'Error: {response.status_code} - {response.reason}')
+else:
+# Вывод успешного ответа и JSON-данных, если запрос выполнен успешно
+    print("Response Content:")
+    print(response.json())
+
+# Task1.5
+# Изменение значения атрибута completed объекта new_todo_object на True
+new_todo_object.completed = True
+
+# Task1.6
+# Обновление значения атрибута "title" в словаре new_todo_item
+new_todo_item["title"] = "Updated Title"
+
+# Выбор идентификатора задачи для HTTP PUT-запроса
+chosen_id = 1
+
+# Формирование URL для HTTP PUT-запроса на обновление задачи
+put_url = f"https://jsonplaceholder.typicode.com/todos/{chosen_id}"
+
+# Выполнение HTTP PUT-запроса для обновления задачи на внешнем сервере (jsonplaceholder.typicode.com)
+put_response = requests.put(put_url, json=new_todo_item)
+
+# Проверка статус-кода ответа
+if put_response.status_code >= 400:
+    # Вывод сообщения об ошибке в случае ошибочного ответа (код 4xx или 5xx)
+    print(f'Error: {put_response.status_code} - {put_response.reason}')
+else:
+    # Вывод успешного ответа и JSON-данных, если запрос выполнен успешно
+    print("Response Content:")
+    print(put_response.json())
+
+# Task2.1
+# Импорт библиотеки requests для выполнения HTTP-запросов
+import requests
+
+# Генерация случайного идентификатора персонажа от 1 до 826
+character_id = random.randint(1, 826)
+
+# Формирование URL для запроса информации о персонаже с использованием Rick and Morty API
+url = f"https://rickandmortyapi.com/api/character/{character_id}"
+
+# Выполнение HTTP GET-запроса по указанному URL
+response = requests.get(url)
+
+# Проверка статус-кода ответа
+if response.status_code == 200:
+    # Если статус-код 200 (OK), получение данных о персонаже в формате JSON
+    character_data = response.json()
+    print("JSON Response:")
+    print(character_data)
+else:
+    # Если статус-код не 200, вывод сообщения об ошибке
+    print(f"Error: {response.status_code} - {response.reason}")
+
+# Task2.2
+if character_data:
+    print("JSON Response:")
+    print(character_data)
+
+    print("\nKeys of the JSON structure:")
+    for key in character_data.keys():
+        print(key)
+
+# Task2.3
+# Проверка наличия данных в переменной character_data
+if character_data:
+    # Если данные присутствуют, вывод JSON-ответа
+    print("JSON Response:")
+    print(character_data)
+
+    # Вывод ключей структуры JSON
+    print("\nKeys of the JSON structure:")
+    for key in character_data.keys():
+        print(key)
+
+# Task2.4
+# Проверка наличия данных в переменной character_data
+if character_data:
+    # Извлечение URL эпизодов из структуры JSON по ключу 'episode'
+    episode_urls = character_data['episode']
+
+    # Извлечение идентификаторов эпизодов из URL, представленных в виде строк
+    episode_ids = [int(url.split('/')[-1]) for url in episode_urls]
+
+    # Формирование имени файла, куда будут сохранены URL эпизодов с идентификатором персонажа
+    filename_episodes = f"all_episodes_with_character_{character_id}.txt"
+
+    # Открытие файла в режиме добавления ('a') для записи URL эпизодов
+    with open(filename_episodes, 'a') as file:
+        # Запись каждого URL эпизода в отдельную строку файла
+        for url in episode_urls:
+            file.write(url + '\n')
+
+    # Вывод сообщения об успешном сохранении URL эпизодов в файл
+    print(f"Episode URLs saved to '{filename_episodes}'")
+
+
+# Task2.5
+# Выполнение HTTP GET-запроса для получения информации о первом эпизоде Rick and Morty API
+episode_response = requests.get("https://rickandmortyapi.com/api/episode/1")
+print(episode_response.json())
+
+# Task2.6
+# Создание класса Episode для представления информации о серии
+class Episode:
+    def __init__(self, id, name, air_date, episode, characters, url, created):
+        self.id = id
+        self.name = name
+        self.air_date = air_date
+        self.episode = episode
+        self.characters = characters
+        self.url = url
+        self.created = created
+
+    def __str__(self):
+        return f"Episode ID: {self.id}, Name: {self.name}, Air Date: {self.air_date}"
+    
+# Task2.7
+# Получение информации о нескольких эпизодах и создание объектов Episode
+episode_objects = []
+
+for episode_id in episode_ids:
+    url = f"https://rickandmortyapi.com/api/episode/{episode_id}"
+    response = requests.get(url)
+
+    if response.status_code == 200:
+        episode_data = response.json()
+        episode = Episode(**episode_data)
+        episode_objects.append(episode)
+    else:
+        print(f"Error fetching episode {episode_id}: {response.status_code} - {response.reason}")
+
+# Task2.8
+# Добавление метода display_info к классу Episode для вывода информации о серии
+class Episode:
+
+    def display_info(self):
+        print(f"Episode ID: {self.id}")
+        print(f"Name: {self.name}")
+        print(f"Air Date: {self.air_date}")
+
+# Task2.10
+# Создание класса Character для представления информации о персонаже
+class Character:
+    def __init__(self, id, name, status, species, type, gender, origin, location, image, episode, url, created):
+        self.id = id
+        self.name = name
+        self.status = status
+        self.species = species
+        self.type = type
+        self.gender = gender
+        self.origin = origin
+        self.location = location
+        self.image = image
+        self.episode = episode
+        self.url = url
+        self.created = created
+
+    def __str__(self):
+        return f"Character ID: {self.id}, Name: {self.name}, Status: {self.status}"
